@@ -1,7 +1,6 @@
 import streamlit as st
 import pickle
 import pandas as pd
-import re
 import string
 
 # Set page config
@@ -11,36 +10,18 @@ st.set_page_config(
     layout="wide"
 )
 
-# Try to import nltk with fallback
-try:
-    import nltk
-    from nltk.corpus import stopwords
-    
-    # Download required NLTK data quietly
-    try:
-        nltk.data.find('tokenizers/punkt')
-    except LookupError:
-        nltk.download('punkt', quiet=True)
-    
-    try:
-        nltk.data.find('corpora/stopwords')
-    except LookupError:
-        nltk.download('stopwords', quiet=True)
-    
-    stop_words = set(stopwords.words('english'))
-    NLTK_AVAILABLE = True
-except:
-    # Fallback stopwords if NLTK fails
-    stop_words = set(['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 
-                     'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers',
-                     'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves',
-                     'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are',
-                     'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does',
-                     'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until',
-                     'while', 'of', 'at', 'by', 'for', 'with', 'through', 'during', 'before', 'after',
-                     'above', 'below', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again',
-                     'further', 'then', 'once'])
-    NLTK_AVAILABLE = False
+# Simple stopwords list (no NLTK dependency issues)
+STOPWORDS = {
+    'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours',
+    'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers',
+    'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves',
+    'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are',
+    'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does',
+    'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until',
+    'while', 'of', 'at', 'by', 'for', 'with', 'through', 'during', 'before', 'after',
+    'above', 'below', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again',
+    'further', 'then', 'once'
+}
 
 # Load model components
 @st.cache_resource
@@ -73,7 +54,7 @@ def preprocess_text(text):
     
     # Remove stopwords
     words = text.split()
-    words = [word for word in words if word not in stop_words]
+    words = [word for word in words if word not in STOPWORDS]
     
     return ' '.join(words)
 
@@ -165,7 +146,7 @@ def main():
         for emotion, example in examples.items():
             if st.button(f"Try: {emotion}", key=f"example_{emotion}"):
                 st.session_state.user_input = example
-                st.experimental_rerun()
+                st.rerun()
     
     # Footer
     st.markdown("---")
