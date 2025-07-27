@@ -42,10 +42,6 @@ emotion-classification-app/
 ├── 🚀 Main Application
 │   ├── streamlit_app.py                    # Main Streamlit web application
 │   └── requirements.txt                    # Python dependencies
-├── 🧪 Testing & Verification
-│   ├── test_model.py                       # Interactive command-line testing
-│   ├── test_sentences.py                   # Comprehensive test sentences
-│   └── verify_model.py                     # Automated model performance analysis
 ├── ⚙️ Setup & Deployment
 │   ├── setup.py                           # Automated setup script
 │   ├── Procfile                           # Heroku deployment configuration
@@ -115,12 +111,6 @@ streamlit run streamlit_app.py
 
 The local app will start at `http://localhost:8501`
 
-#### Option 2: Command Line Testing
-
-```bash
-python test_model.py
-```
-
 ## 🖥️ Web Interface Features
 
 ### Main Features:
@@ -175,20 +165,26 @@ python test_model.py
 4. View results: **JOY (85.2% confidence)**
 
 ### Command Line:
+The model can be used programmatically through the Streamlit interface or by importing the model files directly in your Python code.
+
 ```python
-from test_model import predict_emotion, load_model_components
+import pickle
 
-# Load model
-model, vectorizer, emotion_mapping = load_model_components()
+# Load model components
+with open("logistic_model_bow.pkl", "rb") as f:
+    model = pickle.load(f)
 
-# Predict emotion
-emotion, confidence, probs = predict_emotion(
-    "I love spending time with my family", 
-    model, vectorizer, emotion_mapping
-)
+with open("bow_vectorizer.pkl", "rb") as f:
+    vectorizer = pickle.load(f)
 
-print(f"Emotion: {emotion} ({confidence:.1f}% confidence)")
-# Output: Emotion: love (92.3% confidence)
+with open("emotion_mapping.pkl", "rb") as f:
+    emotion_mapping = pickle.load(f)
+
+# Use the model for predictions
+text_vector = vectorizer.transform(["I love this project!"])
+prediction = model.predict(text_vector)[0]
+emotion = emotion_mapping[prediction]
+print(f"Predicted emotion: {emotion}")
 ```
 
 ## 🛠️ Customization
