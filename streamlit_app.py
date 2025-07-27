@@ -80,73 +80,52 @@ def main():
         st.error("Failed to load model components. Please check if all .pkl files are available.")
         return
     
-    # Create two columns
-    col1, col2 = st.columns([2, 1])
+    # Create main content area
+    st.header("📝 Enter Text for Emotion Classification")
     
-    with col1:
-        st.header("📝 Enter Text for Emotion Classification")
-        
-        # Text input
-        st.write("Type your text here:")
-        user_text = st.text_area(
-            "",
-            placeholder="Example: I feel so happy today because the weather is beautiful!",
-            height=100,
-            key="user_input"
-        )
-        
-        # Classify button
-        if st.button("🔍 Classify Emotion", type="primary"):
-            if user_text.strip():
-                try:
-                    # Preprocess the text
-                    processed_text = preprocess_text(user_text)
-                    
-                    # Vectorize the text
-                    text_vector = vectorizer.transform([processed_text])
-                    
-                    # Get prediction and probabilities
-                    prediction = model.predict(text_vector)[0]
-                    probabilities = model.predict_proba(text_vector)[0]
-                    
-                    # Get emotion name
-                    emotion = emotion_mapping[prediction]
-                    confidence = max(probabilities) * 100
-                    
-                    # Display results
-                    st.success(f"**Predicted Emotion: {emotion.title()} ({confidence:.1f}% confidence)**")
-                    
-                    # Show probability distribution
-                    st.subheader("📊 Probability Distribution")
-                    prob_df = pd.DataFrame({
-                        'Emotion': [emotion_mapping[i].title() for i in range(len(probabilities))],
-                        'Probability': probabilities
-                    }).sort_values('Probability', ascending=False)
-                    
-                    st.bar_chart(prob_df.set_index('Emotion'))
-                    
-                except Exception as e:
-                    st.error(f"Error during prediction: {e}")
-            else:
-                st.warning("Please enter some text to classify!")
+    # Text input
+    st.write("Type your text here:")
+    user_text = st.text_area(
+        "",
+        placeholder="Example: I feel so happy today because the weather is beautiful!",
+        height=100,
+        key="user_input"
+    )
     
-    with col2:
-        st.header("🧪 Emotion Examples")
-        st.write("Try these examples:")
-        
-        examples = {
-            "😢 Sadness": "I lost my job today and feel completely devastated",
-            "😠 Anger": "I can't believe they canceled my flight without any notice!",
-            "❤️ Love": "I love spending time with my family on weekends",
-            "😲 Surprise": "I couldn't believe my eyes when I saw the surprise party!",
-            "😨 Fear": "I'm terrified of spiders and can't go near them",
-            "😊 Joy": "I'm so excited about my graduation ceremony tomorrow!"
-        }
-        
-        for emotion, example in examples.items():
-            if st.button(f"Try: {emotion}", key=f"example_{emotion}"):
-                st.session_state.user_input = example
-                st.rerun()
+    # Classify button
+    if st.button("🔍 Classify Emotion", type="primary"):
+        if user_text.strip():
+            try:
+                # Preprocess the text
+                processed_text = preprocess_text(user_text)
+                
+                # Vectorize the text
+                text_vector = vectorizer.transform([processed_text])
+                
+                # Get prediction and probabilities
+                prediction = model.predict(text_vector)[0]
+                probabilities = model.predict_proba(text_vector)[0]
+                
+                # Get emotion name
+                emotion = emotion_mapping[prediction]
+                confidence = max(probabilities) * 100
+                
+                # Display results
+                st.success(f"**Predicted Emotion: {emotion.title()} ({confidence:.1f}% confidence)**")
+                
+                # Show probability distribution
+                st.subheader("📊 Probability Distribution")
+                prob_df = pd.DataFrame({
+                    'Emotion': [emotion_mapping[i].title() for i in range(len(probabilities))],
+                    'Probability': probabilities
+                }).sort_values('Probability', ascending=False)
+                
+                st.bar_chart(prob_df.set_index('Emotion'))
+                
+            except Exception as e:
+                st.error(f"Error during prediction: {e}")
+        else:
+            st.warning("Please enter some text to classify!")
     
     # Footer
     st.markdown("---")
