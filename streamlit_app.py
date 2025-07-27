@@ -2,222 +2,155 @@ import streamlit as st
 import pickle
 import pandas as pd
 import string
-import warnings
-warnings.filterwarnings("ignore")
 
-# Set page config first
+# Set page config
 st.set_page_config(
     page_title="Emotion Classification App",
     page_icon="🎭",
     layout="wide"
 )
 
-# Try to import nltk and handle the download
-try:
-    import nltk
-    from nltk.corpus import stopwords
-    
-    # Download required NLTK data
-    try:
-        nltk.data.find('tokenizers/punkt')
-    except LookupError:
-        with st.spinner("Downloading NLTK data..."):
-            nltk.download('punkt', quiet=True)
-    
-    try:
-        nltk.data.find('corpora/stopwords')
-    except LookupError:
-        with st.spinner("Downloading NLTK data..."):
-            nltk.download('stopwords', quiet=True)
-            
-except ImportError:
-    st.error("NLTK not available. Please install nltk package.")
-    st.stop()
+# Simple stopwords list (no NLTK dependency issues)
+STOPWORDS = {
+    'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours',
+    'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers',
+    'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves',
+    'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are',
+    'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does',
+    'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until',
+    'while', 'of', 'at', 'by', 'for', 'with', 'through', 'during', 'before', 'after',
+    'above', 'below', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again',
+    'further', 'then', 'once'
+}
 
-# Load the model, vectorizer, and emotion mapping
+# Load model components
 @st.cache_resource
 def load_model_components():
     try:
-        # Load the logistic regression model
         with open("logistic_model_bow.pkl", "rb") as f:
             model = pickle.load(f)
         
-        # Load the vectorizer
         with open("bow_vectorizer.pkl", "rb") as f:
             vectorizer = pickle.load(f)
         
-        # Load emotion mapping
         with open("emotion_mapping.pkl", "rb") as f:
             emotion_mapping = pickle.load(f)
         
         return model, vectorizer, emotion_mapping
-    except FileNotFoundError as e:
-        st.error(f"Model files not found: {e}")
-        st.error("Please make sure all .pkl files are in the repository.")
-        return None, None, None
     except Exception as e:
-        st.error(f"Error loading model: {e}")
+        st.error(f"Error loading model files: {e}")
         return None, None, None
 
-# Text preprocessing functions (same as in training)
-def remove_punc(txt):
-    return txt.translate(str.maketrans('', '', string.punctuation))
-
-def remove_numbers(txt):
-    new = ''
-    for i in txt:
-        if not i.isdigit():
-            new = new + i
-    return new
-
-def remove_emojis(txt):
-    new = ''
-    for i in txt:
-        if i.isascii():
-            new = new + i
-    return new
-
-def remove_stopwords(txt):
-    stop_words = set(stopwords.words('english'))
-    words = txt.split()
-    cleaned = []
-    for word in words:
-        if word not in stop_words:
-            cleaned.append(word)
-    return ' '.join(cleaned)
-
+# Text preprocessing function
 def preprocess_text(text):
-    """Apply the same preprocessing steps as used in training"""
     # Convert to lowercase
     text = text.lower()
     
     # Remove punctuation
-    text = remove_punc(text)
+    text = text.translate(str.maketrans('', '', string.punctuation))
     
-    # Remove numbers
-    text = remove_numbers(text)
-    
-    # Remove emojis
-    text = remove_emojis(text)
+    # Remove extra whitespace
+    text = ' '.join(text.split())
     
     # Remove stopwords
-    text = remove_stopwords(text)
+    words = text.split()
+    words = [word for word in words if word not in STOPWORDS]
     
-    return text
+    return ' '.join(words)
 
-# Streamlit UI
+# Main app
 def main():
-    st.set_page_config(
-        page_title="Emotion Classification App",
-        page_icon="😊",
-        layout="wide"
-    )
-    
     st.title("🎭 Emotion Classification App")
-    st.markdown("---")
     
-    # Load model components
-    model, vectorizer, emotion_mapping = load_model_components()
-    
-    if model is None:
-        st.stop()
-    
-    # Sidebar with information
-    st.sidebar.title("📊 Model Information")
-    st.sidebar.info(
-        """
+    # Sidebar with model information
+    with st.sidebar:
+        st.header("📊 Model Information")
+        st.markdown("""
         **Model Details:**
         - Algorithm: Logistic Regression
         - Vectorizer: Bag of Words (CountVectorizer)
         - Accuracy: 88.9%
         - Emotions: sadness, anger, love, surprise, fear, joy
-        """
-    )
+        """)
     
-    # Main content
+    # Load model components
+    model, vectorizer, emotion_mapping = load_model_components()
+    
+    if model is None:
+        st.error("Failed to load model components. Please check if all .pkl files are available.")
+        return
+    
+    # Create two columns
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.subheader("📝 Enter Text for Emotion Classification")
-        user_input = st.text_area(
-            "Type your text here:",
+        st.header("📝 Enter Text for Emotion Classification")
+        
+        # Text input
+        st.write("Type your text here:")
+        user_text = st.text_area(
+            "",
             placeholder="Example: I feel so happy today because the weather is beautiful!",
-            height=150
+            height=100,
+            key="user_input"
         )
         
-        # Prediction button
+        # Classify button
         if st.button("🔍 Classify Emotion", type="primary"):
-            if user_input.strip():
-                with st.spinner("Analyzing emotion..."):
-                    # Preprocess the input text
-                    processed_text = preprocess_text(user_input)
+            if user_text.strip():
+                try:
+                    # Preprocess the text
+                    processed_text = preprocess_text(user_text)
                     
-                    # Transform using the vectorizer
-                    text_vectorized = vectorizer.transform([processed_text])
+                    # Vectorize the text
+                    text_vector = vectorizer.transform([processed_text])
                     
-                    # Make prediction
-                    prediction = model.predict(text_vectorized)[0]
-                    prediction_proba = model.predict_proba(text_vectorized)[0]
+                    # Get prediction and probabilities
+                    prediction = model.predict(text_vector)[0]
+                    probabilities = model.predict_proba(text_vector)[0]
                     
                     # Get emotion name
                     emotion = emotion_mapping[prediction]
-                    confidence = prediction_proba[prediction] * 100
+                    confidence = max(probabilities) * 100
                     
                     # Display results
-                    st.success(f"**Predicted Emotion: {emotion.upper()}** 🎯")
-                    st.info(f"**Confidence: {confidence:.2f}%**")
+                    st.success(f"**Predicted Emotion: {emotion.title()} ({confidence:.1f}% confidence)**")
                     
-                    # Show all probabilities
-                    st.subheader("📈 Emotion Probabilities")
-                    prob_data = []
-                    for i, prob in enumerate(prediction_proba):
-                        prob_data.append({
-                            'Emotion': emotion_mapping[i].title(),
-                            'Probability': f"{prob*100:.2f}%",
-                            'Score': prob
-                        })
+                    # Show probability distribution
+                    st.subheader("📊 Probability Distribution")
+                    prob_df = pd.DataFrame({
+                        'Emotion': [emotion_mapping[i].title() for i in range(len(probabilities))],
+                        'Probability': probabilities
+                    }).sort_values('Probability', ascending=False)
                     
-                    prob_df = pd.DataFrame(prob_data)
-                    prob_df = prob_df.sort_values('Score', ascending=False)
+                    st.bar_chart(prob_df.set_index('Emotion'))
                     
-                    # Display as a bar chart
-                    st.bar_chart(prob_df.set_index('Emotion')['Score'])
-                    
-                    # Display as a table
-                    st.dataframe(prob_df[['Emotion', 'Probability']], hide_index=True)
-                    
-                    # Show processed text
-                    with st.expander("🔧 View Preprocessed Text"):
-                        st.text(f"Original: {user_input}")
-                        st.text(f"Processed: {processed_text}")
+                except Exception as e:
+                    st.error(f"Error during prediction: {e}")
             else:
                 st.warning("Please enter some text to classify!")
     
     with col2:
-        st.subheader("🎨 Emotion Examples")
+        st.header("🧪 Emotion Examples")
+        st.write("Try these examples:")
+        
         examples = {
-            "😢 Sadness": "I feel so lonely and heartbroken today",
-            "😠 Anger": "I am furious about this unfair treatment",
-            "❤️ Love": "I love spending time with my family",
-            "😮 Surprise": "I can't believe this amazing news!",
-            "😨 Fear": "I am terrified of heights",
-            "😄 Joy": "I feel incredible happiness and excitement"
+            "😢 Sadness": "I lost my job today and feel completely devastated",
+            "😠 Anger": "I can't believe they canceled my flight without any notice!",
+            "❤️ Love": "I love spending time with my family on weekends",
+            "😲 Surprise": "I couldn't believe my eyes when I saw the surprise party!",
+            "😨 Fear": "I'm terrified of spiders and can't go near them",
+            "😊 Joy": "I'm so excited about my graduation ceremony tomorrow!"
         }
         
         for emotion, example in examples.items():
-            if st.button(f"Try: {emotion}", key=emotion):
-                st.query_params.text = example
+            if st.button(f"Try: {emotion}", key=f"example_{emotion}"):
+                st.session_state.user_input = example
+                st.rerun()
     
     # Footer
     st.markdown("---")
-    st.markdown(
-        """
-        <div style='text-align: center'>
-            <p>Built with ❤️ using Streamlit | Model Accuracy: 88.9%</p>
-        </div>
-        """, 
-        unsafe_allow_html=True
-    )
+    st.markdown("Built with ❤️ using Streamlit | Model Accuracy: 88.9%")
 
 if __name__ == "__main__":
     main()
