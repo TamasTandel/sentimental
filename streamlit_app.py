@@ -129,7 +129,27 @@ def main():
     
     # Footer
     st.markdown("---")
-    st.markdown("Built with ❤️ using Streamlit | Model Accuracy: 88.9%")
+    
+    # Create footer columns for better layout
+    footer_col1, footer_col2, footer_col3 = st.columns([1, 2, 1])
+    
+    with footer_col2:
+        st.markdown(
+            """
+            <div style='text-align: center; padding: 20px;'>
+                <p style='margin: 5px 0; font-size: 16px;'>
+                    Built with ❤️ using Streamlit | Model Accuracy: 88.9%
+                </p>
+                <p style='margin: 5px 0; font-size: 14px; color: #666;'>
+                    🚀 Developed by <strong>Tamas Tandel</strong>
+                </p>
+                <p style='margin: 5px 0; font-size: 12px; color: #888;'>
+                    Machine Learning • Natural Language Processing • Emotion Classification
+                </p>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
 
 if __name__ == "__main__":
     main()

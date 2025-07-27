@@ -11,6 +11,8 @@ A machine learning project that classifies text emotions using Natural Language 
 [**🚀 Try the app live here!**](https://sentimentalanalysis.streamlit.app) ✨ **NOW LIVE!**
 
 > 🎉 **Successfully Deployed!** Your emotion classification app is now accessible worldwide!
+> 
+> 💡 **Created by Tamas Tandel** - Machine Learning Engineer
 
 ## 📊 Project Overview
 
@@ -303,4 +305,17 @@ For questions or suggestions, please open an issue in the repository.
 
 ---
 
+<div align="center">
+
+### 🚀 Created by **Tamas Tandel**
+
+**Machine Learning Engineer | NLP Enthusiast | AI Developer**
+
+*Specializing in Emotion Classification, Natural Language Processing, and Intelligent Web Applications*
+
 **Built with ❤️ using Python, Scikit-learn, and Streamlit**
+
+[![GitHub](https://img.shields.io/badge/GitHub-TamasTandel-black?style=flat-square&logo=github)](https://github.com/TamasTandel)
+[![Streamlit](https://img.shields.io/badge/Live%20App-Streamlit-red?style=flat-square&logo=streamlit)](https://sentimentalanalysis.streamlit.app)
+
+</div>
