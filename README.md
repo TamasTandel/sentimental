@@ -312,6 +312,7 @@ For questions or suggestions, please open an issue in the repository.
 **Built with ❤️ using Python, Scikit-learn, and Streamlit**
 
 [![GitHub](https://img.shields.io/badge/GitHub-TamasTandel-black?style=flat-square&logo=github)](https://github.com/TamasTandel)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Tamas%20Tandel-blue?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/tamas-tandel-80b857315)
 [![Streamlit](https://img.shields.io/badge/Live%20App-Streamlit-red?style=flat-square&logo=streamlit)](https://sentimenta1analysis.streamlit.app)
 
 </div>
