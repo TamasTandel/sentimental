@@ -8,7 +8,9 @@
 A machine learning project that classifies text emotions using Natural Language Processing (NLP) techniques and provides an interactive Streamlit web interface.
 
 ## 🌟 Live Demo
-[**Try the app live here!**](https://your-app-url.streamlit.app) _(Update this URL after deployment)_
+[**Try the app live here!**](https://your-username-emotion-classification-app.streamlit.app) _(Will be available after deployment)_
+
+> 🚀 **Deploy in 5 minutes!** Follow the [Deployment Guide](DEPLOYMENT_GUIDE.md) to get your app live on Streamlit Cloud.
 
 ## 📊 Project Overview
 
