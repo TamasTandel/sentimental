@@ -8,7 +8,7 @@
 A machine learning project that classifies text emotions using Natural Language Processing (NLP) techniques and provides an interactive Streamlit web interface.
 
 ## 🌟 Live Demo
-[**🚀 Try the app live here!**](https://sentimentalanalysis.streamlit.app) ✨ **NOW LIVE!**
+[**🚀 Try the app live here!**](https://sentimenta1analysis.streamlit.app) ✨ **NOW LIVE!**
 
 > 🎉 **Successfully Deployed!** Your emotion classification app is now accessible worldwide!
 > 
@@ -93,7 +93,7 @@ emotion-classification-app/
 ### Running the Application
 
 #### 🌐 **Live Web App (Recommended)**
-**Your app is now live!** Visit: [https://sentimentalanalysis.streamlit.app](https://sentimentalanalysis.streamlit.app)
+**Your app is now live!** Visit: [https://sentimenta1analysis.streamlit.app](https://sentimenta1analysis.streamlit.app)
 
 #### 💻 **Local Development**
 
@@ -316,6 +316,6 @@ For questions or suggestions, please open an issue in the repository.
 **Built with ❤️ using Python, Scikit-learn, and Streamlit**
 
 [![GitHub](https://img.shields.io/badge/GitHub-TamasTandel-black?style=flat-square&logo=github)](https://github.com/TamasTandel)
-[![Streamlit](https://img.shields.io/badge/Live%20App-Streamlit-red?style=flat-square&logo=streamlit)](https://sentimentalanalysis.streamlit.app)
+[![Streamlit](https://img.shields.io/badge/Live%20App-Streamlit-red?style=flat-square&logo=streamlit)](https://sentimenta1analysis.streamlit.app)
 
 </div>
