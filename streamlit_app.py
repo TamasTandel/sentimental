@@ -2,21 +2,37 @@ import streamlit as st
 import pickle
 import pandas as pd
 import string
-import nltk
-from nltk.corpus import stopwords
 import warnings
 warnings.filterwarnings("ignore")
 
-# Download required NLTK data
-try:
-    nltk.data.find('tokenizers/punkt')
-except LookupError:
-    nltk.download('punkt')
+# Set page config first
+st.set_page_config(
+    page_title="Emotion Classification App",
+    page_icon="🎭",
+    layout="wide"
+)
 
+# Try to import nltk and handle the download
 try:
-    nltk.data.find('corpora/stopwords')
-except LookupError:
-    nltk.download('stopwords')
+    import nltk
+    from nltk.corpus import stopwords
+    
+    # Download required NLTK data
+    try:
+        nltk.data.find('tokenizers/punkt')
+    except LookupError:
+        with st.spinner("Downloading NLTK data..."):
+            nltk.download('punkt', quiet=True)
+    
+    try:
+        nltk.data.find('corpora/stopwords')
+    except LookupError:
+        with st.spinner("Downloading NLTK data..."):
+            nltk.download('stopwords', quiet=True)
+            
+except ImportError:
+    st.error("NLTK not available. Please install nltk package.")
+    st.stop()
 
 # Load the model, vectorizer, and emotion mapping
 @st.cache_resource
@@ -37,7 +53,10 @@ def load_model_components():
         return model, vectorizer, emotion_mapping
     except FileNotFoundError as e:
         st.error(f"Model files not found: {e}")
-        st.error("Please run the training notebook first to generate the required model files.")
+        st.error("Please make sure all .pkl files are in the repository.")
+        return None, None, None
+    except Exception as e:
+        st.error(f"Error loading model: {e}")
         return None, None, None
 
 # Text preprocessing functions (same as in training)
