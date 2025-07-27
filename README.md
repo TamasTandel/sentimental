@@ -8,9 +8,9 @@
 A machine learning project that classifies text emotions using Natural Language Processing (NLP) techniques and provides an interactive Streamlit web interface.
 
 ## 🌟 Live Demo
-[**Try the app live here!**](https://your-username-emotion-classification-app.streamlit.app) _(Will be available after deployment)_
+[**Try the app live here!**](https://tamastandel-sentimental-streamlit-app.streamlit.app) _(Will be available after deployment)_
 
-> 🚀 **Deploy in 5 minutes!** Follow the [Deployment Guide](DEPLOYMENT_GUIDE.md) to get your app live on Streamlit Cloud.
+> 🚀 **Deploy in 5 minutes!** Your code is already on GitHub at [TamasTandel/sentimental](https://github.com/TamasTandel/sentimental)
 
 ## 📊 Project Overview
 
@@ -69,8 +69,8 @@ emotion-classification-app/
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/emotion-classification-app.git
-   cd emotion-classification-app
+   git clone https://github.com/TamasTandel/sentimental.git
+   cd sentimental
    ```
 
 2. **Quick Setup (Recommended)**:
